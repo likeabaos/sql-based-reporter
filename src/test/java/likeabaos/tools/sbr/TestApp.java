@@ -18,14 +18,13 @@ public class TestApp {
 
     @Test
     public void testRequiredArguments() {
-	String[] args = new String[] { "jdbc:host@port:sid", "test_user", "test_password", "/path/to/config.json",
-		"-d" };
+	String[] args = new String[] { "jdbc:host@port:sid", "test_user", "test_password", "config_file.json", "-d" };
 	App app = new App();
 	new CommandLine(app).parseArgs(args);
 	assertEquals("jdbc:host@port:sid", app.getConnectionString());
 	assertEquals("test_user", app.getUsername());
 	assertEquals("test_password", app.getPassword());
-	assertEquals("/path/to/config.json".toLowerCase(), app.getConfigFile().getAbsolutePath().toLowerCase());
+	assertEquals("config_file.json".toLowerCase(), app.getConfigFile().getName().toLowerCase());
 	assertTrue(app.isDebugOn());
     }
 
@@ -50,5 +49,4 @@ public class TestApp {
 	    assertEquals(prop.getProperty("app_version"), version);
 	}
     }
-
 }

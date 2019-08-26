@@ -28,6 +28,8 @@ public class ReportConfig {
     private String outputPath;
     private boolean emailAsPlainText = false;
     private boolean emailAttachment = true;
+    private boolean emailWhenNoData = true;
+    private int emailRowsLimit = 10;
 
     public String getName() {
 	return name;
@@ -115,6 +117,22 @@ public class ReportConfig {
 
     public void setEmailAttachment(boolean emailAttachment) {
 	this.emailAttachment = emailAttachment;
+    }
+
+    public boolean isEmailWhenNoData() {
+	return emailWhenNoData;
+    }
+
+    public void setEmailWhenNoData(boolean emailWhenNoData) {
+	this.emailWhenNoData = emailWhenNoData;
+    }
+
+    public int getEmailRowsLimit() {
+	return emailRowsLimit;
+    }
+
+    public void setEmailRowsLimit(int emailRowsLimit) {
+	this.emailRowsLimit = emailRowsLimit;
     }
 
     public static File locateConfigFile(File file) {

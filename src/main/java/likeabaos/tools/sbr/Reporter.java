@@ -3,9 +3,8 @@ package likeabaos.tools.sbr;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
@@ -34,27 +33,44 @@ public class Reporter {
 		continue;
 	    }
 
-	    List<List<String>> data = new ArrayList<List<String>>();
 	    try (Connection conn = this.db.connect(); Statement stmt = conn.createStatement()) {
 		String finalSql = part.getSql();
 		log.debug("SQL to run:{}{}", System.lineSeparator(), finalSql);
-		
+
 		ResultSet rs = stmt.executeQuery(finalSql);
-		ResultSetMetaData metaData = rs.getMetaData();
-		while (rs.next()) {
-		    List<String> row = new ArrayList<String>();
-		    for (int col = 1; col <= metaData.getColumnCount(); col++) {
-			row.add(rs.getString(col));
-		    }
-		    data.add(row);
-		}
-		part.setResult(data);
+		Result result = this.getDataFromResultSet(rs);
+		part.setResult(result);
+		
+		log.info("Returned {} column(s) and {} row(s)", result.getLastColumn(), result.getLastRow());
 	    } catch (Exception e) {
+		Result result = new Result();
+		result.setErrorMessage(e.getMessage());
+		part.setResult(result);
+
 		log.error("Found error while running report");
 		log.catching(e);
 		continue;
 	    }
 	}
 	log.traceExit();
+    }
+
+    Result getDataFromResultSet(ResultSet rs) throws SQLException {
+	ResultSetMetaData metaData = rs.getMetaData();
+	Result result = new Result();
+	result.createColumns(metaData);
+
+	while (rs.next()) {
+	    for (int col = 1; col <= metaData.getColumnCount(); col++) {
+		int colType = metaData.getColumnType(col);
+		if (Result.integerTypes.contains(colType))
+		    result.add(col, rs.getInt(col));
+		else if (Result.doubleTypes.contains(colType))
+		    result.add(col, rs.getDouble(col));
+		else
+		    result.add(col, rs.getString(col));
+	    }
+	}
+	return result;
     }
 }

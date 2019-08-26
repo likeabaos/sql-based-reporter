@@ -1,13 +1,11 @@
 package likeabaos.tools.sbr;
 
-import java.util.List;
-
 public class ReportPart {
     private String header;
     private String description;
     private String sql;
     private boolean enabled = true;
-    private List<List<String>> result;
+    private Result result;
 
     public String getHeader() {
 	return header;
@@ -40,12 +38,12 @@ public class ReportPart {
     public void setEnabled(boolean enabled) {
 	this.enabled = enabled;
     }
-    
-    public List<List<String>> getResult() {
+
+    public Result getResult() {
 	return this.result;
     }
-    
-    public void setResult(List<List<String>> result) {
+
+    public void setResult(Result result) {
 	this.result = result;
     }
 }

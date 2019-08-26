@@ -1,3 +1,11 @@
+# Eclipse
+.settings/
+.classpath
+.project
+
+# Test/Dev stuffs
+test.db
+
 # MacOS folder
 .DS_Store
 

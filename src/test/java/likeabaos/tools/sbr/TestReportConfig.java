@@ -35,7 +35,8 @@ public class TestReportConfig {
 	    assertEquals("Part " + orderNum, part.getHeader());
 	    assertEquals("Description of part {}, shows before data".replace("{}", "" + orderNum),
 		    part.getDescription());
-	    assertEquals("SELECT * FROM warehouse WHERE id > {}".replace("{}", "" + orderNum), part.getSql());
+	    assertEquals("SELECT id, name, capacity FROM warehouse WHERE id > {}".replace("{}", "" + orderNum),
+		    part.getSql());
 	    assertTrue(part.isEnabled());
 	}
     }
