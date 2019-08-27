@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,8 +54,8 @@ public class Result {
 	    this.lastRow = column.size();
     }
 
-    public Collection<String> getColumnNames() {
-	return this.columns.values();
+    public List<String> getColumnNames() {
+	return new ArrayList<String>(this.columns.values());
     }
 
     public int getLastRow() {
@@ -68,7 +67,11 @@ public class Result {
     }
 
     public Object get(int col, int row) {
-	return this.getColumn(col).get(row - 1);
+	List<Object> column = this.getColumn(col);
+	if (column.size() >= row)
+	    return column.get(row - 1);
+	else
+	    return null;
     }
 
     public String getErrorMessage() {

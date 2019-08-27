@@ -16,8 +16,9 @@
             "enabled": true
         }
     },
-    "output": "email",
+    "output": "csv",
     "outputPath": "/path/to/report/folder",
+    "sendEmail": true,
     "emailAsPlainText": false,
-    "emailAttachment": true
+    "dataPayloadMethod": "attachment"
 }

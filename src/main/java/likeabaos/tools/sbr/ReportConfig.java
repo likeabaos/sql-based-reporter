@@ -24,10 +24,11 @@ public class ReportConfig {
     private String cc;
     private String bcc;
     private final Map<Integer, ReportPart> parts = new TreeMap<Integer, ReportPart>();
-    private String output = "csv";
+    private String output = "csv"; // csv, excel
     private String outputPath;
-    private boolean emailAsPlainText = false;
-    private boolean emailAttachment = true;
+    private boolean sendEmail = false;	//independence of output type
+    private boolean emailAsPlainText = false;	//false: link only
+    private String dataPayloadMethod = null;	//null, "", attachment, table, link
     private boolean emailWhenNoData = true;
     private int emailRowsLimit = 10;
 
@@ -103,6 +104,14 @@ public class ReportConfig {
 	this.outputPath = outputPath;
     }
 
+    public boolean isSendEmail() {
+	return sendEmail;
+    }
+
+    public void setSendEmail(boolean sendEmail) {
+	this.sendEmail = sendEmail;
+    }
+
     public boolean isEmailAsPlainText() {
 	return emailAsPlainText;
     }
@@ -111,12 +120,12 @@ public class ReportConfig {
 	this.emailAsPlainText = emailAsPlainText;
     }
 
-    public boolean isEmailAttachment() {
-	return emailAttachment;
+    public String getDataPayloadMethod() {
+	return dataPayloadMethod;
     }
 
-    public void setEmailAttachment(boolean emailAttachment) {
-	this.emailAttachment = emailAttachment;
+    public void setDataPayloadMethod(String dataPayloadMethod) {
+	this.dataPayloadMethod = dataPayloadMethod;
     }
 
     public boolean isEmailWhenNoData() {
@@ -135,7 +144,7 @@ public class ReportConfig {
 	this.emailRowsLimit = emailRowsLimit;
     }
 
-    public static File locateConfigFile(File file) {
+    public static File locateConfigFile(File file, File searchDir) {
 	if (file != null && file.isFile()) {
 	    log.info("Used provided file: " + file.getName());
 	    return file;
@@ -144,7 +153,7 @@ public class ReportConfig {
 	log.info("Looking for most recent json file in the current dir...");
 	File theFile = null;
 	long lastModified = 0L;
-	for (File f : new File(".").listFiles()) {
+	for (File f : searchDir.listFiles()) {
 	    if (f.isFile() && f.getName().toLowerCase().endsWith(".json") && f.lastModified() > lastModified) {
 		theFile = f;
 		lastModified = f.lastModified();

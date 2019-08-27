@@ -55,7 +55,7 @@ public class Reporter {
 	log.traceExit();
     }
 
-    Result getDataFromResultSet(ResultSet rs) throws SQLException {
+    private Result getDataFromResultSet(ResultSet rs) throws SQLException {
 	ResultSetMetaData metaData = rs.getMetaData();
 	Result result = new Result();
 	result.createColumns(metaData);

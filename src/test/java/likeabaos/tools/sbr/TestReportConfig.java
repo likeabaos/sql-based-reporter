@@ -1,9 +1,12 @@
 package likeabaos.tools.sbr;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Map.Entry;
@@ -15,6 +18,15 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
 public class TestReportConfig {
+    
+    @Test
+    public void testLocateLocalConfigFile() {
+	File config = ReportConfig.locateConfigFile(null, new File("src/test/resources"));
+	assertNotNull(config);
+	assertTrue(config.exists());
+	assertTrue(config.isFile());
+	assertEquals("sample_mocked_report_config.json", config.getName().toLowerCase());
+    }
 
     @Test
     public void testSampleFromJson() throws JsonSyntaxException, JsonIOException, FileNotFoundException {
@@ -24,8 +36,11 @@ public class TestReportConfig {
 	assertEquals("A SQL Report", config.getName());
 	assertEquals("author@here.com", config.getFrom());
 	assertEquals("someone@nowhere.com", config.getTo());
-	assertEquals("email", config.getOutput());
+	assertEquals("csv", config.getOutput());
 	assertEquals("/path/to/report/folder", config.getOutputPath());
+	assertTrue(config.isSendEmail());
+	assertFalse(config.isEmailAsPlainText());
+	assertEquals("attachment", config.getDataPayloadMethod());
 	assertEquals(2, config.getParts().size());
 
 	for (Entry<Integer, ReportPart> item : config.getParts().entrySet()) {

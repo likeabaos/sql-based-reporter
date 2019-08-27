@@ -66,7 +66,7 @@ public class App implements Callable<Integer> {
 	log.info("Program started");
 	try {
 	    Database db = new Database(this.db_connection_string, this.db_username, this.db_username);
-	    File configFile = ReportConfig.locateConfigFile(this.config_file);
+	    File configFile = ReportConfig.locateConfigFile(this.config_file, new File("."));
 	    ReportConfig config = ReportConfig.fromFile(configFile);
 	    Reporter rpt = new Reporter(db, config);
 	    rpt.run();
