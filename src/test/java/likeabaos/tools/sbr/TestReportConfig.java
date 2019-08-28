@@ -36,7 +36,7 @@ public class TestReportConfig {
 	assertEquals("A SQL Report", config.getName());
 	assertEquals("author@here.com", config.getFrom());
 	assertEquals("someone@nowhere.com", config.getTo());
-	assertEquals("csv", config.getOutput());
+	assertEquals("Csv", config.getOutput());
 	assertEquals("/path/to/report/folder", config.getOutputPath());
 	assertTrue(config.isSendEmail());
 	assertFalse(config.isEmailAsPlainText());

@@ -10,6 +10,9 @@ import java.util.Map.Entry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import likeabaos.tools.sbr.output.Helper;
+import likeabaos.tools.sbr.output.IOutput;
+
 public class Reporter {
     private final Logger log = LogManager.getLogger();
 
@@ -38,10 +41,13 @@ public class Reporter {
 		log.debug("SQL to run:{}{}", System.lineSeparator(), finalSql);
 
 		ResultSet rs = stmt.executeQuery(finalSql);
-		Result result = this.getDataFromResultSet(rs);
-		part.setResult(result);
+		String className = Helper.getClassName(this.config.getOutput());
+		log.debug("Output class is {}", className);
 		
-		log.info("Returned {} column(s) and {} row(s)", result.getLastColumn(), result.getLastRow());
+		Class<?> cls = Class.forName(className);
+		IOutput output = (IOutput)cls.newInstance();
+		output.setResultSet(rs);
+		output.save();
 	    } catch (Exception e) {
 		Result result = new Result();
 		result.setErrorMessage(e.getMessage());
@@ -53,24 +59,5 @@ public class Reporter {
 	    }
 	}
 	log.traceExit();
-    }
-
-    private Result getDataFromResultSet(ResultSet rs) throws SQLException {
-	ResultSetMetaData metaData = rs.getMetaData();
-	Result result = new Result();
-	result.createColumns(metaData);
-
-	while (rs.next()) {
-	    for (int col = 1; col <= metaData.getColumnCount(); col++) {
-		int colType = metaData.getColumnType(col);
-		if (Result.integerTypes.contains(colType))
-		    result.add(col, rs.getInt(col));
-		else if (Result.doubleTypes.contains(colType))
-		    result.add(col, rs.getDouble(col));
-		else
-		    result.add(col, rs.getString(col));
-	    }
-	}
-	return result;
     }
 }

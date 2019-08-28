@@ -16,7 +16,7 @@
             "enabled": true
         }
     },
-    "output": "csv",
+    "output": "Csv",
     "outputPath": "/path/to/report/folder",
     "sendEmail": true,
     "emailAsPlainText": false,
