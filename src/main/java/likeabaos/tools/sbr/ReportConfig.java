@@ -24,13 +24,13 @@ public class ReportConfig {
     private String cc;
     private String bcc;
     private final Map<Integer, ReportPart> parts = new TreeMap<Integer, ReportPart>();
-    private String output = "csv"; // csv, excel
-    private String outputPath;
-    private boolean sendEmail = false;	//independence of output type
-    private boolean emailAsPlainText = false;	//false: link only
-    private String dataPayloadMethod = null;	//null, "", attachment, table, link
+    private String output = "CSV"; // CSV, EXCEL
+    private String outputPath = ".";
+    private boolean sendEmail = false; // independence of output type
+    private String dataPayloadMethod = "attachment"; // attachment, table, link
     private boolean emailWhenNoData = true;
     private int emailRowsLimit = 10;
+    private boolean saveSeparateFile = true;
 
     public String getName() {
 	return name;
@@ -112,14 +112,6 @@ public class ReportConfig {
 	this.sendEmail = sendEmail;
     }
 
-    public boolean isEmailAsPlainText() {
-	return emailAsPlainText;
-    }
-
-    public void setEmailAsPlainText(boolean emailAsPlainText) {
-	this.emailAsPlainText = emailAsPlainText;
-    }
-
     public String getDataPayloadMethod() {
 	return dataPayloadMethod;
     }
@@ -142,6 +134,14 @@ public class ReportConfig {
 
     public void setEmailRowsLimit(int emailRowsLimit) {
 	this.emailRowsLimit = emailRowsLimit;
+    }
+
+    public boolean isSaveSeparateFile() {
+	return saveSeparateFile;
+    }
+
+    public void setSaveSeparateFile(boolean saveSeparateFile) {
+	this.saveSeparateFile = saveSeparateFile;
     }
 
     public static File locateConfigFile(File file, File searchDir) {

@@ -17,7 +17,7 @@
         }
     },
     "output": "CSV",
-    "outputPath": "/path/to/report/folder",
+    "outputPath": "output",
     "sendEmail": true,
     "dataPayloadMethod": "attachment"
 }

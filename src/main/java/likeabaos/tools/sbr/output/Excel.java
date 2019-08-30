@@ -1,5 +1,5 @@
 package likeabaos.tools.sbr.output;
 
-public class Excel {
+public class EXCEL {
 
 }

@@ -2,16 +2,14 @@ package likeabaos.tools.sbr;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import likeabaos.tools.sbr.output.BaseOutput;
 import likeabaos.tools.sbr.output.Helper;
-import likeabaos.tools.sbr.output.IOutput;
 
 public class Reporter {
     private final Logger log = LogManager.getLogger();
@@ -36,16 +34,19 @@ public class Reporter {
 		continue;
 	    }
 
-	    try (Connection conn = this.db.connect(); Statement stmt = conn.createStatement()) {
+	    try (Connection conn = this.db.connect();
+		    Statement stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
 		String finalSql = part.getSql();
 		log.debug("SQL to run:{}{}", System.lineSeparator(), finalSql);
 
 		ResultSet rs = stmt.executeQuery(finalSql);
 		String className = Helper.getClassName(this.config.getOutput());
 		log.debug("Output class is {}", className);
-		
+
 		Class<?> cls = Class.forName(className);
-		IOutput output = (IOutput)cls.newInstance();
+		BaseOutput output = (BaseOutput) cls.newInstance();
+		output.setReportPartId(orderNum);
+		output.setReportConfig(this.config);
 		output.setResultSet(rs);
 		output.save();
 	    } catch (Exception e) {
