@@ -1,7 +1,5 @@
 {
     "name": "A SQL Report",
-    "from": "author@here.com",
-    "to": "someone@nowhere.com",
     "parts": {
         "1": {
             "header": "Part 1",
@@ -16,8 +14,19 @@
             "enabled": true
         }
     },
-    "output": "CSV",
-    "outputPath": "/path/to/report/folder",
-    "sendEmail": true,
-    "dataPayloadMethod": "attachment"
+    "emailConfig": {
+        "enabled": false,
+        "from": "author@here.com",
+        "to": "someone@nowhere.com",
+        "subject": "Testing SQL reporter",
+        "attachments": [1, 2],
+        "emailWhenNoData": true,
+        "emailRowsLimit": 10
+    },
+    "outputConfig": {
+        "enabled": false,
+        "output": "CSV",
+        "outputPath": "/path/to/report/folder",
+        "saveSeparateFile": true
+    }
 }

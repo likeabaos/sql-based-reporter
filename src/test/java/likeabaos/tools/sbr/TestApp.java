@@ -18,35 +18,46 @@ public class TestApp {
 
     @Test
     public void testRequiredArguments() {
-	String[] args = new String[] { "jdbc:host@port:sid", "test_user", "test_password", "config_file.json", "-d" };
-	App app = new App();
-	new CommandLine(app).parseArgs(args);
-	assertEquals("jdbc:host@port:sid", app.getConnectionString());
-	assertEquals("test_user", app.getUsername());
-	assertEquals("test_password", app.getPassword());
-	assertEquals("config_file.json".toLowerCase(), app.getConfigFile().getName().toLowerCase());
-	assertTrue(app.isDebugOn());
+        String[] args = new String[] { "jdbc:host@port:sid", "test_user", "test_password", "config_file.json",
+                "ignored/config.properties" };
+        App app = new App();
+        new CommandLine(app).parseArgs(args);
+        assertEquals("jdbc:host@port:sid", app.getConnectionString());
+        assertEquals("test_user", app.getUsername());
+        assertEquals("test_password", app.getPassword());
+        assertEquals("config_file.json".toLowerCase(), app.getConfigFile().getName().toLowerCase());
+        assertEquals("config.properties".toLowerCase(), app.getEmailPropsFile().getName().toLowerCase());
+    }
+
+    @Test
+    public void testOptionalArugments() {
+        String[] args = new String[] { "jdbc:host@port:sid", "test_user", "test_password", "config_file.json",
+                "ignored/config.properties", "-d", "-m", "test_server:test_password" };
+        App app = new App();
+        new CommandLine(app).parseArgs(args);
+        assertTrue(app.isDebugOn());
+        assertEquals("test_server:test_password", app.getEmailCredentials());
     }
 
     @Test(expected = MissingParameterException.class)
     public void testMissingArguments() {
-	new CommandLine(new App()).parseArgs(new String[] {});
+        new CommandLine(new App()).parseArgs(new String[] { "jdbc:host@port:sid" });
     }
 
     @Test
     public void testDynamicVersion() throws IOException {
-	CommandLine cli = new CommandLine(new App());
-	cli.parseArgs(new String[] { "-V" });
-	assertTrue(cli.isVersionHelpRequested());
+        CommandLine cli = new CommandLine(new App());
+        cli.parseArgs(new String[] { "-V" });
+        assertTrue(cli.isVersionHelpRequested());
 
-	ByteArrayOutputStream os = new ByteArrayOutputStream();
-	cli.printVersionHelp(new PrintStream(os));
-	String version = os.toString("UTF8").trim();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        cli.printVersionHelp(new PrintStream(os));
+        String version = os.toString("UTF8").trim();
 
-	try (InputStream input = this.getClass().getClassLoader().getResourceAsStream("build.properties")) {
-	    Properties prop = new Properties();
-	    prop.load(input);
-	    assertEquals(prop.getProperty("app_version"), version);
-	}
+        try (InputStream input = this.getClass().getClassLoader().getResourceAsStream("build.properties")) {
+            Properties prop = new Properties();
+            prop.load(input);
+            assertEquals(prop.getProperty("app_version"), version);
+        }
     }
 }

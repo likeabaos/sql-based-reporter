@@ -6,6 +6,7 @@
 # Test/Dev stuffs
 test.db
 output/
+ignored/
 
 # MacOS folder
 .DS_Store

@@ -5,45 +5,36 @@ public class ReportPart {
     private String description;
     private String sql;
     private boolean enabled = true;
-    private Result result;
 
     public String getHeader() {
-	return header;
+        return header;
     }
 
     public void setHeader(String header) {
-	this.header = header;
+        this.header = header;
     }
 
     public String getDescription() {
-	return description;
+        return description;
     }
 
     public void setDescription(String description) {
-	this.description = description;
+        this.description = description;
     }
 
     public String getSql() {
-	return sql;
+        return sql;
     }
 
     public void setSql(String sql) {
-	this.sql = sql;
+        this.sql = sql;
     }
 
     public boolean isEnabled() {
-	return enabled;
+        return enabled;
     }
 
     public void setEnabled(boolean enabled) {
-	this.enabled = enabled;
-    }
-
-    public Result getResult() {
-	return this.result;
-    }
-
-    public void setResult(Result result) {
-	this.result = result;
+        this.enabled = enabled;
     }
 }

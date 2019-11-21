@@ -1,40 +1,47 @@
 package likeabaos.tools.sbr.output;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.QuoteMode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.util.FileUtils;
 
 public class CSV extends BaseOutput {
-    private final Logger log = LogManager.getLogger();
+    private final Logger LOG = LogManager.getLogger();
+    public static final CSVFormat CSV_FORMAT = CSVFormat.EXCEL.withQuoteMode(QuoteMode.NON_NUMERIC);
 
-    @Override
-    public void save() throws Exception {
-	String filepath = this.determineOutputFilepath();
+    public CSV() {
+        super(false);
+    }
 
-	if (filepath == null)
-	    throw new IllegalArgumentException("File path cannot be null");
-	if (this.getResultSet() == null)
-	    throw new IllegalStateException("The resultset is not set, cannot do anything.");
-
-	File file = new File(filepath);
-	log.info("Saving CSV to: {}", file.getAbsolutePath());
-	this.createParentFolder(file);
-	try (CSVPrinter printer = new CSVPrinter(new FileWriter(file),
-		CSVFormat.EXCEL.withHeader(this.getResultSet().getMetaData()).withQuoteMode(QuoteMode.NON_NUMERIC))) {
-	    printer.printRecords(this.getResultSet());
-	}
+    public CSV(boolean deleteOutputOnExit) {
+        super(deleteOutputOnExit);
     }
 
     @Override
     public String determineOutputFilepath() {
-	return this.determineBaseFilepath() + new SimpleDateFormat("_yyyyMMdd_HHmmss").format(new Date()) + ".csv";
+        return this.determineBaseFilepath() + new SimpleDateFormat(" yyyyMMdd_HHmmss").format(new Date()) + ".csv";
     }
 
+    @Override
+    public void save() throws Exception {
+        File file = new File(this.determineOutputFilepath());
+        FileUtils.makeParentDirs(file);
+        LOG.info("Saving Report to: " + file.getPath());
+        if (this.isCopySource()) {
+            LOG.debug("Just Copying source file");
+            Files.copy(this.getSourceFile().toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            this.setOutputFile(file);
+            return;
+        }
+
+        throw new IllegalStateException(
+                "This is not implemented. Assume source file is CSV format and should be copied to target");
+    }
 }
