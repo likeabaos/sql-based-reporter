@@ -1,24 +1,27 @@
 {
-    "name": "A SQL Report",
+    "name": "A Report",
+    "summary": "Summary of the report",
     "parts": {
         "1": {
             "header": "Part 1",
             "description": "Description of part 1, shows before data",
-            "sql": "SELECT id, name, capacity FROM warehouse WHERE id > 1",
+            "sql": ["SELECT id, name, capacity FROM warehouse WHERE id > 1"],
             "enabled": true
         },
         "2": {
             "header": "Part 2",
             "description": "Description of part 2, shows before data",
-            "sql": "SELECT id, name, capacity FROM warehouse WHERE id > 2",
+            "sql": ["SELECT id, name, capacity FROM warehouse WHERE id > 2"],
             "enabled": true
         }
     },
     "emailConfig": {
         "from": "author@here.com",
-        "to": "someone@nowhere.com",
+        "to": "someone@nowhere.com, some1else@nowhere.com",
         "subject": "Testing SQL reporter",
-        "attachments": [1, 2]
+        "attachments": [1, 2],
+        "displayTable": true,
+        "displayLink" : true
     },
     "outputConfig": {
         "output": "CSV",

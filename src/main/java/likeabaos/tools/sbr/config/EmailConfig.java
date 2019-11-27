@@ -8,9 +8,11 @@ public class EmailConfig {
     private String subject;
     private String from;
     private String to;
-    private String cc;
-    private String bcc;
+    private String cc = "";
+    private String bcc = "";
     private List<Integer> attachments;
+    private boolean displayTable;
+    private boolean displayLink;
     private boolean emailWhenNoData = true;
     private int emailRowsLimit = 10;
 
@@ -71,6 +73,22 @@ public class EmailConfig {
 
     public void setAttachments(List<Integer> attachments) {
         this.attachments = attachments;
+    }
+
+    public boolean isDisplayTable() {
+        return displayTable;
+    }
+
+    public void setDisplayTable(boolean displayTable) {
+        this.displayTable = displayTable;
+    }
+
+    public boolean isDisplayLink() {
+        return displayLink;
+    }
+
+    public void setDisplayLink(boolean displayLink) {
+        this.displayLink = displayLink;
     }
 
     public boolean isEmailWhenNoData() {

@@ -13,8 +13,11 @@ import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 
 import likeabaos.tools.sbr.config.ReportConfig;
 import picocli.CommandLine;
@@ -28,7 +31,7 @@ import picocli.CommandLine.Parameters;
         versionProvider = likeabaos.tools.sbr.App.VersionProvider.class,
         description = "Can be used to generate scheduled reports using SQL(s)")
 public class App implements Callable<Integer> {
-    private final Logger log = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     public static void main(String[] args) throws SQLException {
         int exitCode = new CommandLine(new App()).execute(args);
@@ -44,13 +47,14 @@ public class App implements Callable<Integer> {
     @Parameters(index = "2", description = "The database account password")
     private String db_password;
 
-    @Parameters(index = "3", description = "The full path to report configuration file")
-    private File config_file;
+    @Parameters(index = "3", description = "The full path to report definition file")
+    private File report_definition_file;
 
-    @Parameters(index = "4", description = "The full path to email server properties file")
-    private File email_props_file;
+    @Option(names = { "-c", "--config" },
+            description = "Full path to the alternate configuration directory. Default is the directory this app started at.")
+    private File config_dir = new File(".");
 
-    @Option(names = { "-d", "--debug" }, description = "Turn on debug and all logging levels")
+    @Option(names = { "-d", "--debug" }, description = "Turn on debug mode.")
     private boolean debug_on = false;
 
     @Option(names = { "-m", "--mail" },
@@ -69,12 +73,12 @@ public class App implements Callable<Integer> {
         return this.db_password;
     }
 
-    public File getConfigFile() {
-        return this.config_file;
+    public File getReportDefinitionFile() {
+        return this.report_definition_file;
     }
 
-    public File getEmailPropsFile() {
-        return this.email_props_file;
+    public File getConfigDir() {
+        return this.config_dir;
     }
 
     public boolean isDebugOn() {
@@ -86,21 +90,39 @@ public class App implements Callable<Integer> {
     }
 
     public Integer call() {
-        log.info("Program started");
+        LOG.info("Program started");
+        StopWatch watch = new StopWatch();
+
         try {
-            Database db = new Database(this.db_connection_string, this.db_username, this.db_username);
-            File configFile = ReportConfig.locateConfigFile(this.config_file, new File("."));
-            ReportConfig config = ReportConfig.fromFile(configFile);
+            watch.start();
+            if (this.isDebugOn()) {
+                Configurator.setRootLevel(Level.TRACE);
+                printParameters(this);
+            }
+            Database db = new Database(this.getConnectionString(), this.getUsername(), this.getPassword());
+            ReportConfig config = ReportConfig.fromFile(this.getReportDefinitionFile());
             Authenticator auth = App.getMailAuthenticator(this.getEmailCredentials());
-            Properties props = App.loadProperties(this.getEmailPropsFile());
-            Reporter rpt = new Reporter(db, config, props, auth);
+            Reporter rpt = new Reporter(db, config, auth, this.getConfigDir());
             rpt.run();
         } catch (Exception e) {
-            log.catching(e);
+            LOG.catching(e);
             return -1;
+        } finally {
+            watch.stop();
         }
-        log.info("Proram completed");
+
+        LOG.info("Proram completed in: {}", watch.toString());
         return 0;
+    }
+
+    public static void printParameters(App app) {
+        LOG.debug("Connection String: {}", app.getConnectionString());
+        LOG.debug("Database Username: {}", app.getUsername());
+        LOG.debug("Database password: {}", StringUtils.isBlank(app.getPassword()) ? "***Blank***" : "***Hidden***");
+        LOG.debug("Report Definition: {}", app.getReportDefinitionFile().getAbsolutePath());
+        LOG.debug("Report Config Dir: {}", app.getConfigDir().getAbsolutePath());
+        LOG.debug("Is Debug On?: {}", app.isDebugOn());
+        LOG.debug("Email Credentials: {}", (app.getEmailCredentials().length() <= 1) ? "***Blank***" : "***Hidden***");
     }
 
     public static Authenticator getMailAuthenticator(String creds) {

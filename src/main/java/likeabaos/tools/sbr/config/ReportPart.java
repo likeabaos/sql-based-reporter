@@ -1,9 +1,9 @@
-package likeabaos.tools.sbr;
+package likeabaos.tools.sbr.config;
 
 public class ReportPart {
     private String header;
     private String description;
-    private String sql;
+    private String[] sql;
     private boolean enabled = true;
 
     public String getHeader() {
@@ -23,10 +23,10 @@ public class ReportPart {
     }
 
     public String getSql() {
-        return sql;
+        return String.join(System.lineSeparator(), this.sql);
     }
 
-    public void setSql(String sql) {
+    public void setSql(String[] sql) {
         this.sql = sql;
     }
 

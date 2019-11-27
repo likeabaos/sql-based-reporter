@@ -14,11 +14,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
-import likeabaos.tools.sbr.ReportPart;
-
 public class ReportConfig {
     private static final Logger log = LogManager.getLogger();
     private String name;
+    private String summary;
     private final Map<Integer, ReportPart> parts = new TreeMap<Integer, ReportPart>();
     private EmailConfig emailConfig;
     private OutputConfig outputConfig;
@@ -29,6 +28,14 @@ public class ReportConfig {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     public Map<Integer, ReportPart> getParts() {
@@ -53,26 +60,6 @@ public class ReportConfig {
 
     public void setOutputConfig(OutputConfig outputConfig) {
         this.outputConfig = outputConfig;
-    }
-
-    public static File locateConfigFile(File file, File searchDir) {
-        if (file != null && file.isFile()) {
-            log.info("Used provided file: " + file.getName());
-            return file;
-        }
-
-        log.info("Looking for most recent json file in the current dir...");
-        File theFile = null;
-        long lastModified = 0L;
-        for (File f : searchDir.listFiles()) {
-            if (f.isFile() && f.getName().toLowerCase().endsWith(".json") && f.lastModified() > lastModified) {
-                theFile = f;
-                lastModified = f.lastModified();
-            }
-        }
-
-        log.info("Found file: " + theFile == null ? "null" : theFile.getName());
-        return theFile;
     }
 
     public static ReportConfig fromFile(File configFile)

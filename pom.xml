@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>likeabaos.tools.sbr</groupId>
   <artifactId>sql-based-reporter</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.5.0-Beta</version>
   <name>SQL-Based Reporter</name>
 
   <properties>
@@ -44,8 +44,8 @@
     </dependency>
 
     <dependency>
-      <groupId>javax.mail</groupId>
-      <artifactId>javax.mail-api</artifactId>
+      <groupId>com.sun.mail</groupId>
+      <artifactId>javax.mail</artifactId>
       <version>1.6.2</version>
     </dependency>
 
@@ -68,6 +68,14 @@
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>1.12.1</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>

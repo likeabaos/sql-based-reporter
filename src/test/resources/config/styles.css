@@ -1,0 +1,19 @@
+<style>
+body {
+  font-family: "Calibri", sans-serif;
+  font-size: 11pt;
+}
+.table_note {
+  background-color: yellow;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 0in 5.0pt 0in 5.0pt;
+}
+th {
+  background:#D3D3D3;
+}
+</style>

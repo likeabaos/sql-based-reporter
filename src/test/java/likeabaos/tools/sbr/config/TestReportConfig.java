@@ -5,10 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.Date;
 import java.util.Map.Entry;
 
 import org.junit.Test;
@@ -17,27 +15,16 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
-import likeabaos.tools.sbr.ReportPart;
 import likeabaos.tools.sbr.util.Directory;
 
 public class TestReportConfig {
-
-    @Test
-    public void testLocateLocalConfigFile() {
-        new File(Directory.getConfig("sample_mocked_report_config.json")).setLastModified(new Date().getTime());
-        File config = ReportConfig.locateConfigFile(null, new File(Directory.TEST_CONFIG_DIR));
-        assertNotNull(config);
-        assertTrue(config.exists());
-        assertTrue(config.isFile());
-        assertEquals("sample_mocked_report_config.json", config.getName().toLowerCase());
-    }
-
     @Test
     public void testSampleFromJson() throws JsonSyntaxException, JsonIOException, FileNotFoundException {
         String path = Directory.getConfig("sample_mocked_report_config.json");
         ReportConfig config = new Gson().fromJson(new BufferedReader(new FileReader(path)), ReportConfig.class);
 
-        assertEquals("A SQL Report", config.getName());
+        assertEquals("A Report", config.getName());
+        assertEquals("This is a report using SQL Reporter", config.getSummary());
         assertEquals(2, config.getParts().size());
         for (Entry<Integer, ReportPart> item : config.getParts().entrySet()) {
             int orderNum = item.getKey();
@@ -59,6 +46,8 @@ public class TestReportConfig {
         assertEquals(true, config.getEmailConfig().isEmailWhenNoData());
         assertEquals(10, config.getEmailConfig().getEmailRowsLimit());
         assertEquals("[1, 2]", String.valueOf(config.getEmailConfig().getAttachments()));
+        assertEquals(true, config.getEmailConfig().isDisplayTable());
+        assertEquals(true, config.getEmailConfig().isDisplayLink());
 
         assertNotNull("Output config cannot be null", config.getOutputConfig());
         assertEquals(false, config.getOutputConfig().isEnabled());
