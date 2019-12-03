@@ -1,0 +1,20 @@
+{
+    "name": "SQL Report: Link - No Output",
+    "summary": "This report will not have any data link because output is disabled. Link must have a valid output.",
+    "parts": {
+        "1": {
+            "header": "Part 1",
+            "description": "Description of part 1, shows before data",
+            "sql": ["SELECT id, name, capacity FROM warehouse WHERE id > 1"],
+            "enabled": true
+        }
+    },
+    "emailConfig": {
+        "from": "author@here.com",
+        "to": "someone@nowhere.com",
+        "subject": "TEST SQL Report: Link - No Output",
+        "attachments": [],
+        "displayTable": false,
+        "displayLink" : true
+    }
+}

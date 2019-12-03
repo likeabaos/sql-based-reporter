@@ -74,7 +74,7 @@ public class TestEmailer extends DataProvider {
         this.prep(true);
         Emailer mailer = new Emailer(rpt);
         Session session = mailer.createSession();
-        assertEquals("{mail.smtp.port=587, mail.smtp.host=smtp.company.server.com}",
+        assertEquals("{mail.smtp.port=3025, mail.smtp.host=localhost}",
                 session.getProperties().toString());
     }
 

@@ -1,0 +1,20 @@
+{
+    "name": "SQL Report: Attachment - No Data",
+    "summary": "This report will have 1 attachment. Even the data is is empty, the file should have the headers.",
+    "parts": {
+        "1": {
+            "header": "Part 1",
+            "description": "Description of part 1, shows before data",
+            "sql": ["SELECT id, name, capacity FROM warehouse WHERE 1 = 2"],
+            "enabled": true
+        }
+    },
+    "emailConfig": {
+        "from": "author@here.com",
+        "to": "someone@nowhere.com",
+        "subject": "TEST SQL Report: Attachment - No Data",
+        "attachments": [1],
+        "displayTable": false,
+        "displayLink" : false
+    }
+}

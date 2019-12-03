@@ -1,0 +1,26 @@
+{
+    "name": "SQL Report: Attachment - Single",
+    "summary": "This report will have an Attachment of the data file.",
+    "parts": {
+        "1": {
+            "header": "Part 1",
+            "description": "Description of part 1, shows before data",
+            "sql": ["SELECT id, name, capacity FROM warehouse WHERE id > 1"],
+            "enabled": true
+        }
+    },
+    "emailConfig": {
+        "from": "author@here.com",
+        "to": "someone@nowhere.com",
+        "subject": "TEST SQL Report: Attachment - Single",
+        "attachments": [1],
+        "displayTable": false,
+        "displayLink" : false
+    },
+    "outputConfig": {
+        "enabled": true,
+        "output": "EXCEL",
+        "outputPath": "output/test_email",
+        "saveSeparateFile": true
+    }
+}

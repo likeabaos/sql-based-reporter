@@ -1,0 +1,26 @@
+{
+    "name": "SQL Report: Link - Single",
+    "summary": "This report will have a link to the data file.",
+    "parts": {
+        "1": {
+            "header": "Part 1",
+            "description": "Description of part 1, shows before data",
+            "sql": ["SELECT id, name, capacity FROM warehouse WHERE id > 1"],
+            "enabled": true
+        }
+    },
+    "emailConfig": {
+        "from": "author@here.com",
+        "to": "someone@nowhere.com",
+        "subject": "TEST SQL Report: Link - Single",
+        "attachments": [],
+        "displayTable": false,
+        "displayLink" : true
+    },
+    "outputConfig": {
+        "enabled": true,
+        "output": "CSV",
+        "outputPath": "output/test_email",
+        "saveSeparateFile": true
+    }
+}

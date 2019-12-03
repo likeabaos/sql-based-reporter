@@ -1,0 +1,32 @@
+{
+    "name": "SQL Report: Mixed Payload - Multiple",
+    "summary": "This report will have multiple data sets and only display tables in email",
+    "parts": {
+        "1": {
+            "header": "Part 1",
+            "description": "Description of part 1, shows before data",
+            "sql": ["SELECT id, name, capacity FROM warehouse WHERE id > 1"],
+            "enabled": true
+        },
+        "2": {
+            "header": "Part 2",
+            "description": "Description of part 2, shows before data",
+            "sql": ["SELECT id, name, capacity FROM warehouse WHERE id > 2"],
+            "enabled": true
+        }
+    },
+    "emailConfig": {
+        "from": "author@here.com",
+        "to": "someone@nowhere.com",
+        "subject": "TEST SQL Report: Mixed Payload - Multiple",
+        "attachments": [1, 2],
+        "displayTable": true,
+        "displayLink" : true
+    },
+    "outputConfig": {
+        "enabled": true,
+        "output": "CSV",
+        "outputPath": "output/test_email",
+        "saveSeparateFile": true
+    }
+}

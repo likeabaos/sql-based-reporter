@@ -75,7 +75,7 @@ public class CSV extends BaseOutput {
             }
             html.append("</table>");
 
-            if (rowProcessed < rowId) {
+            if (rowProcessed <= rowId) {
                 html.append("<div class=\"table_note\">");
                 html.append("*Showed ").append(rowProcessed).append(" of ").append(rowId + 1).append(" record(s)");
                 html.append("</div>");

@@ -1,0 +1,32 @@
+{
+    "name": "SQL Report: Attachment - Multiple",
+    "summary": "This report will have 2 attachments of the data files, one for each report part.",
+    "parts": {
+        "1": {
+            "header": "Part 1",
+            "description": "Description of part 1, shows before data",
+            "sql": ["SELECT id, name, capacity FROM warehouse WHERE id > 1"],
+            "enabled": true
+        },
+        "2": {
+            "header": "Part 2",
+            "description": "Description of part 2, shows before data",
+            "sql": ["SELECT id, name, capacity FROM warehouse WHERE id > 2"],
+            "enabled": true
+        }
+    },
+    "emailConfig": {
+        "from": "author@here.com",
+        "to": "someone@nowhere.com",
+        "subject": "TEST SQL Report: Attachment - Multiple",
+        "attachments": [1, 2],
+        "displayTable": false,
+        "displayLink" : false
+    },
+    "outputConfig": {
+        "enabled": true,
+        "output": "EXCEL",
+        "outputPath": "output/test_email",
+        "saveSeparateFile": true
+    }
+}

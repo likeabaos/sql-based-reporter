@@ -24,12 +24,13 @@ import likeabaos.tools.sbr.util.Help;
 
 public class TestReporter extends DataProvider {
     private ReportConfig config;
-    
 
     @Before
     public void prep() throws JsonSyntaxException, JsonIOException, FileNotFoundException {
         config = ReportConfig.fromFile(new File(Directory.getConfig("report_config_test_full_run.json")));
-        config.getOutputConfig().setOutputPath(config.getOutputConfig().getOutputPath() + "/test_full_run");
+        String outputFolder = config.getOutputConfig().getOutputPath() + "/test_full_run";
+        config.getOutputConfig().setOutputPath(outputFolder);
+        Help.deleteFilesInSubfolder(outputFolder);
     }
 
     @Test
@@ -76,4 +77,5 @@ public class TestReporter extends DataProvider {
         rpt.setDeleteOutputOnExit(true);
         rpt.run();
     }
+
 }

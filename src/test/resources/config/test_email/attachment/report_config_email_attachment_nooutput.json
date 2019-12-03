@@ -1,0 +1,20 @@
+{
+    "name": "SQL Report: Attachment - No Output",
+    "summary": "This report will 1 attachment with no output config. It will attach the CSV temp file.",
+    "parts": {
+        "1": {
+            "header": "Part 1",
+            "description": "Description of part 1, shows before data",
+            "sql": ["SELECT id, name, capacity FROM warehouse WHERE id > 1"],
+            "enabled": true
+        }
+    },
+    "emailConfig": {
+        "from": "author@here.com",
+        "to": "someone@nowhere.com",
+        "subject": "TEST SQL Report: Attachment - No Output",
+        "attachments": [1],
+        "displayTable": false,
+        "displayLink" : false
+    }
+}

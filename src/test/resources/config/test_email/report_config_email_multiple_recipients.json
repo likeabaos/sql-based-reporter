@@ -1,0 +1,23 @@
+{
+    "name": "SQL Report: Table - Single, Multiple Recipients",
+    "summary": "This report will have single data set and only display table in email. This is sent to 2 addresses.",
+    "parts": {
+        "1": {
+            "header": "Part 1",
+            "description": "Description of part 1, shows before data",
+            "sql": [
+                "SELECT id, name, capacity FROM warehouse WHERE id > 1"
+            ],
+            "enabled": true
+        }
+    },
+    "emailConfig": {
+        "from": "author@here.com",
+        "to": "someone@nowhere.com, some1else@there.com",
+        "subject": "TEST SQL Report: Table - Single",
+        "attachments": [
+        ],
+        "displayTable": true,
+        "displayLink": false
+    }
+}

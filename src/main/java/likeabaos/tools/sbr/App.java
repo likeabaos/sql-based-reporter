@@ -127,12 +127,15 @@ public class App implements Callable<Integer> {
 
     public static Authenticator getMailAuthenticator(String creds) {
         String[] myCreds = StringUtils.split(creds, ":", 2);
-        Authenticator auth = new Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(myCreds[0], myCreds[1]);
-            }
-        };
-        return auth;
+        if (myCreds.length == 2 && myCreds[0].length() > 0 && myCreds[1].length() > 0) {
+            Authenticator auth = new Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(myCreds[0], myCreds[1]);
+                }
+            };
+            return auth;
+        }
+        return null;
     }
 
     public static Properties loadProperties(File file) throws FileNotFoundException, IOException {

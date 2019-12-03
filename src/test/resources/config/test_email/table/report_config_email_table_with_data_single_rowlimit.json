@@ -1,0 +1,21 @@
+{
+    "name": "SQL Report: Table - Row Limit",
+    "summary": "This report will have single data set and only display table in email. It only shows a subset of data in the table.",
+    "parts": {
+        "1": {
+            "header": "Part 1",
+            "description": "Description of part 1, shows before data",
+            "sql": ["SELECT id, name, capacity FROM warehouse WHERE 1 = 1"],
+            "enabled": true
+        }
+    },
+    "emailConfig": {
+        "from": "author@here.com",
+        "to": "someone@nowhere.com",
+        "subject": "TEST SQL Report: Table - Row Limit",
+        "attachments": [],
+        "displayTable": true,
+        "displayLink" : false,
+        "emailRowsLimit": 2
+    }
+}
