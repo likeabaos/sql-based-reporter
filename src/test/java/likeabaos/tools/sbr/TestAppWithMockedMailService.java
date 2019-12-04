@@ -52,6 +52,14 @@ public class TestAppWithMockedMailService extends DataProvider {
     }
 
     @Test
+    public void testNoEmailNoOutput() throws Exception {
+        this.callApp("test_email/report_config_no_email_no_output.json");
+        assertTrue("Should not have any incoming email", testMailService.waitForIncomingEmail(WAIT_TIMEOUT, 0));
+        Message[] messages = testMailService.getReceivedMessages();
+        assertEquals(0, messages.length);
+    }
+
+    @Test
     public void testMultipleRecipients() throws Exception {
         this.callApp("test_email/report_config_email_multiple_recipients.json");
         assertTrue("Should have 1 incoming email", testMailService.waitForIncomingEmail(WAIT_TIMEOUT, 1));
@@ -66,6 +74,26 @@ public class TestAppWithMockedMailService extends DataProvider {
         MockedEmail item1 = MockedEmail.extract(messages[0]);
         MockedEmail item2 = MockedEmail.extract(messages[1]);
         assertTrue("Emails to different recipient should be the same", item1.compare(true, item2));
+    }
+
+    @Test
+    public void testDisplayTableNoDataShowEmpty() throws Exception {
+        helpTestDisplayFixedHtmlCases("test_email/table/report_config_email_table_with_data_partial_show_empty.json",
+                "TEST SQL Report: Table - Partial - Show Empty",
+                "test_email/table/test_result_table_data_partial_show_empty.txt");
+    }
+
+    @Test
+    public void testDisplayTableNoDataHideEmpty() throws Exception {
+        helpTestDisplayFixedHtmlCases("test_email/table/report_config_email_table_with_data_partial_hide_empty.json",
+                "TEST SQL Report: Table - Partial - Hide Empty",
+                "test_email/table/test_result_table_data_partial_hide_empty.txt");
+    }
+
+    @Test
+    public void testDisplayTableNoDataBlankEmail() throws Exception {
+        helpTestDisplayFixedHtmlCases("test_email/table/report_config_email_table_with_nodata_blankemail.json",
+                "TEST SQL Report: Table - No Data", "test_email/table/test_result_table_nodata_blankemail.txt");
     }
 
     @Test
@@ -123,7 +151,7 @@ public class TestAppWithMockedMailService extends DataProvider {
         assertTrue("Headers of actual is different from expected", expected.compareHeaders(false, actual));
         this.helpTestInlineLink(actual, 2);
     }
-    
+
     @Test
     public void testAttachmentNoData() throws Exception {
         MockedEmail actual = this
@@ -133,7 +161,7 @@ public class TestAppWithMockedMailService extends DataProvider {
         assertTrue("Actual is different from expected", expected.compare(false, actual));
         this.helpTestAttachment(actual, 1, ".csv", 10);
     }
-    
+
     @Test
     public void testAttachmentNoOutput() throws Exception {
         MockedEmail actual = this
@@ -163,7 +191,7 @@ public class TestAppWithMockedMailService extends DataProvider {
         assertTrue("Actual is different from expected", expected.compare(false, actual));
         this.helpTestAttachment(actual, 2, ".xlsx", 50);
     }
-    
+
     @Test
     public void testMixedPayloadMultipleData() throws Exception {
         MockedEmail actual = this
@@ -173,7 +201,7 @@ public class TestAppWithMockedMailService extends DataProvider {
         assertTrue("Actual is different from expected", expected.compareHeaders(false, actual));
         this.helpTestAttachment(actual, 2, ".csv", 30);
         this.helpTestInlineLink(actual, 2);
-        
+
     }
 
     private void helpTestAttachment(MockedEmail email, int numOfAttachments, String ext, int bytes) {

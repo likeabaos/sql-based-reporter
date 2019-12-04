@@ -1,23 +1,25 @@
 package likeabaos.tools.sbr;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import javax.mail.Authenticator;
-import javax.mail.MessagingException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import likeabaos.tools.sbr.config.EmailConfig;
 import likeabaos.tools.sbr.config.ReportConfig;
 import likeabaos.tools.sbr.config.ReportPart;
 import likeabaos.tools.sbr.output.BaseOutput;
@@ -32,6 +34,7 @@ public class Reporter {
     private final File configDir;
     private Map<Integer, File> tempResults;
     private Map<Integer, File> outputResults;
+    private List<Integer> emptyResults;
     private boolean deleteOutputOnExit = false;
 
     public Reporter(Database db, ReportConfig config, Authenticator auth, File configDir) {
@@ -53,16 +56,22 @@ public class Reporter {
         return configDir;
     }
 
-    Map<Integer, File> getTempResults() {
+    public Map<Integer, File> getTempResults() {
         if (outputResults == null)
             outputResults = new TreeMap<>();
         return outputResults;
     }
 
-    Map<Integer, File> getOutputResults() {
+    public Map<Integer, File> getOutputResults() {
         if (tempResults == null)
             tempResults = new TreeMap<>();
         return tempResults;
+    }
+
+    public List<Integer> getEmptyResults() {
+        if (emptyResults == null)
+            emptyResults = new ArrayList<>();
+        return emptyResults;
     }
 
     public boolean isDeleteOutputOnExit() {
@@ -111,9 +120,9 @@ public class Reporter {
             watch.start();
             try (Connection conn = this.db.connect();
                     Statement stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
-                String finalSql = part.getSql();
-                log.debug("SQL to run:{}{}", System.lineSeparator(), finalSql);
-                ResultSet rs = stmt.executeQuery(finalSql);
+                String sql = part.getSql();
+                log.debug("SQL to run:{}{}", System.lineSeparator(), sql);
+                ResultSet rs = stmt.executeQuery(sql);
 
                 // Now we have data for each part. However, we don't want to accumulate all data
                 // from each part (may crash due to too much data in memory); or keep the
@@ -125,6 +134,10 @@ public class Reporter {
 
                 watch.stop();
                 log.debug("Query completed in: {}", watch.toSplitString());
+
+                if (BaseOutput.isTempFileEmpty(tempFile, true))
+                    this.getEmptyResults().add(orderNum);
+
             } catch (Exception e) {
                 log.error("Found error while running report");
                 log.catching(e);
@@ -160,9 +173,64 @@ public class Reporter {
         }
     }
 
-    void send() throws MessagingException, FileNotFoundException, IOException {
+    void send() throws Exception {
+        EmailConfig config = this.getConfig().getEmailConfig();
+
         log.info("Emailing report(s)...");
+        if (!config.isEmailWhenNoData() && this.areAllResultsEmpty()) {
+            log.info("No email will be sent because emailWhenNoData is turn off and all reports returned empty.");
+            return;
+        }
+        
+        log.debug("Replacing placeholers with values...");
+        Map<String, String> valuesInjection = this.queryValuesInjection();
+        for (Entry<String, String> item : valuesInjection.entrySet()) {
+            for (ReportPart part : this.getConfig().getParts().values()) {
+                if (part.isEnabled()) {
+                    part.setDescription(
+                            StringUtils.replace(part.getDescription(), "{{" + item.getKey() + "}}", item.getValue()));
+                }
+            }
+            config.setSubject(StringUtils.replace(config.getSubject(), "{{" + item.getKey() + "}}", item.getValue()));
+        }
+
         Emailer sender = new Emailer(this);
         sender.run();
+    }
+
+    boolean areAllResultsEmpty() {
+        boolean empty = true;
+        for (Entry<Integer, ReportPart> item : this.getConfig().getParts().entrySet()) {
+            if (item.getValue().isEnabled()) {
+                if (!this.getEmptyResults().contains(item.getKey()))
+                    empty = false;
+            }
+        }
+        return empty;
+    }
+
+    Map<String, String> queryValuesInjection() throws Exception {
+        EmailConfig config = this.getConfig().getEmailConfig();
+        String sql = config.getValuesInjectionSQL();
+        Map<String, String> values = new HashMap<>();
+        if (StringUtils.isNotBlank(sql)) {
+            try (Connection conn = this.db.connect();
+                    Statement stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
+
+                log.debug("SQL to run:{}{}", System.lineSeparator(), sql);
+                ResultSet rs = stmt.executeQuery(sql);
+                while (rs.next()) {
+                    for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
+                        String name = rs.getMetaData().getColumnName(i);
+                        String value = (String) rs.getObject(i);
+                        values.put(name, value);
+                    }
+                    // We only use the first row anyway. This is to ensure
+                    // the SQL return multiple rows
+                    break;
+                }
+            }
+        }
+        return values;
     }
 }

@@ -23,7 +23,10 @@ public class ReportPart {
     }
 
     public String getSql() {
-        return String.join(System.lineSeparator(), this.sql);
+        if (this.sql != null)
+            return String.join(System.lineSeparator(), this.sql);
+        else
+            return null;
     }
 
     public void setSql(String[] sql) {

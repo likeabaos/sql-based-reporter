@@ -156,6 +156,12 @@ public class Emailer {
             if (!part.isEnabled())
                 continue;
 
+            if (!emailConfig.isDisplayEmptyReport() && this.rpt.getEmptyResults().contains(entry.getKey())) {
+                LOG.debug("Not adding report #{} because it is empty and displayEmptyReport is turned off",
+                        entry.getKey());
+                continue;
+            }
+
             html.append("<div class=\"report-body\" id=\"").append(entry.getKey()).append("\">");
             if (!StringUtils.isBlank(part.getHeader())) {
                 html.append("<div class=\"rpt-header\">").append(part.getHeader()).append(":</div>");

@@ -43,11 +43,13 @@ public class TestReportConfig {
         assertEquals("someone@nowhere.com", config.getEmailConfig().getTo());
         assertEquals("Testing SQL reporter", config.getEmailConfig().getSubject());
         assertEquals(false, config.getEmailConfig().isEnabled());
-        assertEquals(true, config.getEmailConfig().isEmailWhenNoData());
-        assertEquals(10, config.getEmailConfig().getEmailRowsLimit());
         assertEquals("[1, 2]", String.valueOf(config.getEmailConfig().getAttachments()));
         assertEquals(true, config.getEmailConfig().isDisplayTable());
         assertEquals(true, config.getEmailConfig().isDisplayLink());
+        assertEquals(false, config.getEmailConfig().isDisplayEmptyReport());
+        assertEquals(false, config.getEmailConfig().isEmailWhenNoData());
+        assertEquals(10, config.getEmailConfig().getEmailRowsLimit());
+        assertEquals("SELECT date('now') current_time", config.getEmailConfig().getValuesInjectionSQL());
 
         assertNotNull("Output config cannot be null", config.getOutputConfig());
         assertEquals(false, config.getOutputConfig().isEnabled());

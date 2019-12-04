@@ -1,0 +1,18 @@
+{
+    "name": "A Report",
+    "summary": "This is a report using SQL Reporter",
+    "parts": {
+        "1": {
+            "header": "Part 1",
+            "description": "Description of part 1, shows before data",
+            "sql": ["SELECT id, name, capacity FROM warehouse WHERE id > 1"],
+            "enabled": true
+        },
+        "2": {
+            "header": "Part 2",
+            "description": "Description of part 2, shows before data",
+            "sql": ["SELECT id, name, capacity FROM warehouse WHERE id > 2"],
+            "enabled": true
+        }
+    }
+}

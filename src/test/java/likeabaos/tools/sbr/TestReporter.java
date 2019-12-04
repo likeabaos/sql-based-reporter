@@ -78,4 +78,19 @@ public class TestReporter extends DataProvider {
         rpt.run();
     }
 
+    @Test
+    public void testAreAllResultsEmpty() {
+        Reporter rpt = new Reporter(null, config, null, null);
+        rpt.getTempResults().put(1, new File("/temp1"));
+        rpt.getTempResults().put(2, new File("/temp2"));
+
+        assertFalse(rpt.areAllResultsEmpty());
+        
+        rpt.getEmptyResults().add(1);
+        assertFalse(rpt.areAllResultsEmpty());
+        rpt.getEmptyResults().add(2);
+        assertTrue(rpt.areAllResultsEmpty());
+        rpt.getEmptyResults().add(3);
+    }
+
 }

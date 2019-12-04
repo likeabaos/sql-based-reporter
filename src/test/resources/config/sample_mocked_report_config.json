@@ -23,8 +23,10 @@
         "attachments": [1, 2],
         "displayTable": true,
         "displayLink" : true,
-        "emailWhenNoData": true,
-        "emailRowsLimit": 10
+        "displayEmptyReport": false,
+        "emailWhenNoData": false,
+        "emailRowsLimit": 10,
+        "valuesInjectionSQL": ["SELECT date('now') current_time"]
     },
     "outputConfig": {
         "enabled": false,

@@ -13,8 +13,10 @@ public class EmailConfig {
     private List<Integer> attachments;
     private boolean displayTable;
     private boolean displayLink;
+    private boolean displayEmptyReport = true;
     private boolean emailWhenNoData = true;
     private int emailRowsLimit = 10;
+    private String[] valuesInjectionSQL;
 
     public boolean isEnabled() {
         return enabled;
@@ -91,6 +93,14 @@ public class EmailConfig {
         this.displayLink = displayLink;
     }
 
+    public boolean isDisplayEmptyReport() {
+        return displayEmptyReport;
+    }
+
+    public void setDisplayEmptyReport(boolean displayEmptyReport) {
+        this.displayEmptyReport = displayEmptyReport;
+    }
+
     public boolean isEmailWhenNoData() {
         return emailWhenNoData;
     }
@@ -105,6 +115,17 @@ public class EmailConfig {
 
     public void setEmailRowsLimit(int emailRowsLimit) {
         this.emailRowsLimit = emailRowsLimit;
+    }
+
+    public String getValuesInjectionSQL() {
+        if (this.valuesInjectionSQL != null)
+            return String.join(System.lineSeparator(), this.valuesInjectionSQL);
+        else
+            return null;
+    }
+
+    public void setValuesInjectionSQL(String[] sql) {
+        this.valuesInjectionSQL = sql;
     }
 
 }
