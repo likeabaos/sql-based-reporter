@@ -5,14 +5,18 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
@@ -85,12 +89,38 @@ public class TestReporter extends DataProvider {
         rpt.getTempResults().put(2, new File("/temp2"));
 
         assertFalse(rpt.areAllResultsEmpty());
-        
+
         rpt.getEmptyResults().add(1);
         assertFalse(rpt.areAllResultsEmpty());
         rpt.getEmptyResults().add(2);
         assertTrue(rpt.areAllResultsEmpty());
         rpt.getEmptyResults().add(3);
+    }
+
+    @Test
+    public void testQueryValuesInjectionNormal() throws Exception {
+        String path = Directory.getConfig("value_injection/report_config_normal.json");
+        ReportConfig config = new Gson().fromJson(new BufferedReader(new FileReader(path)), ReportConfig.class);
+        Reporter rpt = new Reporter(db, config, null, null);
+
+        Map<String, String> values = rpt.queryValuesInjection();
+        assertEquals(4, values.size());
+        assertEquals("Testing Value Injection", values.get("value_1"));
+        assertEquals("Unit Testing", values.get("value_2"));
+        assertEquals("2 Rows", values.get("value_3"));
+        assertEquals("1 Row", values.get("value_4"));
+    }
+
+    @Test
+    public void testQueryValuesInjectionMultipleRows() throws Exception {
+        String path = Directory.getConfig("value_injection/report_config_multiple_rows.json");
+        ReportConfig config = new Gson().fromJson(new BufferedReader(new FileReader(path)), ReportConfig.class);
+        Reporter rpt = new Reporter(db, config, null, null);
+
+        Map<String, String> values = rpt.queryValuesInjection();
+        assertEquals(2, values.size());
+        assertEquals("Value 1", values.get("value_1"));
+        assertEquals("Value 2", values.get("value_2"));
     }
 
 }

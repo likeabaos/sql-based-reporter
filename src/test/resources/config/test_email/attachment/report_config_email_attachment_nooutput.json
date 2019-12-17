@@ -1,6 +1,6 @@
 {
-    "name": "SQL Report: Attachment - No Output",
-    "summary": "This report will 1 attachment with no output config. It will attach the CSV temp file.",
+    "name": "The Report with Attachment",
+    "summary": "See attached detail report.",
     "parts": {
         "1": {
             "header": "Part 1",

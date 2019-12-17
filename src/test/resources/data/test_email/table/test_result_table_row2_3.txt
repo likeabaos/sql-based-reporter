@@ -1,6 +1,6 @@
 <body>
-<div class="report-body" id="1"><div class="rpt-header">Part 1:</div>
+<div class="report-body-first" id="1"><div class="rpt-header">Part 1</div>
 <div class="rpt-description">Description of part 1, shows before data</div>
 <div class="rpt-table"><table><tr><th>Id</th><th>Name</th><th>Capacity</th></tr><tr><td>2</td><td>Bags</td><td>2000.0</td></tr><tr><td>3</td><td>Office Chairs</td><td>3000.0</td></tr></table></div>
-</div><br>
+</div>
 </body>

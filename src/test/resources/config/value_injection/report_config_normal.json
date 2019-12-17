@@ -1,20 +1,18 @@
 {
-    "name": "A Report",
-    "summary": "This is a report using SQL Reporter",
+    "name": "Report {{value_1}}",
+    "summary": "This is a report using SQL Reporter for {{value_2}}",
     "parts": {
         "1": {
             "header": "Part 1",
-            "description": "Description of part 1, shows before data",
+            "description": "Description of part 1, {{value_3}}",
             "sql": ["SELECT id, name, capacity FROM warehouse WHERE id > 1"],
-            "enabled": true,
-            "throwExceptionOnError": false
+            "enabled": true
         },
         "2": {
             "header": "Part 2",
-            "description": "Description of part 2, shows before data",
+            "description": "Description of part 2, {{value_4}}",
             "sql": ["SELECT id, name, capacity FROM warehouse WHERE id > 2"],
-            "enabled": true,
-            "throwExceptionOnError": false
+            "enabled": true
         }
     },
     "emailConfig": {
@@ -28,11 +26,11 @@
         "displayEmptyReport": false,
         "emailWhenNoData": false,
         "emailRowsLimit": 10,
-        "valuesInjectionSQL": ["SELECT date('now') current_time"]
-    },
-    "outputConfig": {
-        "enabled": false,
-        "output": "CSV",
-        "outputPath": "/path/to/report/folder"
+        "valuesInjectionSQL": [
+                "select 'Testing Value Injection' as value_1, ",
+                "'Unit Testing' as value_2, ",
+                "'2 Rows' as value_3, ",
+                "'1 Row' as value_4"
+        ]
     }
 }

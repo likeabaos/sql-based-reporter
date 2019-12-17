@@ -77,14 +77,14 @@ public class TestAppWithMockedMailService extends DataProvider {
     }
 
     @Test
-    public void testDisplayTableNoDataShowEmpty() throws Exception {
+    public void testDisplayTablePartialShowEmpty() throws Exception {
         helpTestDisplayFixedHtmlCases("test_email/table/report_config_email_table_with_data_partial_show_empty.json",
                 "TEST SQL Report: Table - Partial - Show Empty",
                 "test_email/table/test_result_table_data_partial_show_empty.txt");
     }
 
     @Test
-    public void testDisplayTableNoDataHideEmpty() throws Exception {
+    public void testDisplayTablePartialHideEmpty() throws Exception {
         helpTestDisplayFixedHtmlCases("test_email/table/report_config_email_table_with_data_partial_hide_empty.json",
                 "TEST SQL Report: Table - Partial - Hide Empty",
                 "test_email/table/test_result_table_data_partial_hide_empty.txt");
@@ -118,6 +118,13 @@ public class TestAppWithMockedMailService extends DataProvider {
     public void testDisplayTableRowLimit() throws Exception {
         helpTestDisplayFixedHtmlCases("test_email/table/report_config_email_table_with_data_single_rowlimit.json",
                 "TEST SQL Report: Table - Row Limit", "test_email/table/test_result_table_rowlimit.txt");
+    }
+    
+    @Test
+    public void testWithValueInjection() throws Exception {
+        helpTestDisplayFixedHtmlCases("test_email/table/report_config_value_injection.json",
+                "Testing SQL reporter value injection", "test_email/table/test_result_value_injection.txt");
+
     }
 
     @Test
@@ -249,8 +256,11 @@ public class TestAppWithMockedMailService extends DataProvider {
         expected.setTo("someone@nowhere.com");
         expected.setSubject(mailSubject);
 
-        Document doc = Jsoup.parse(Help.readFile(Directory.getConfig("styles.css")));
-        doc.outputSettings().prettyPrint(false);
+        String cssString = Help.readFile(Directory.getConfig("styles.css"));
+        Document doc = Jsoup.parseBodyFragment("");
+        doc.outputSettings(Emailer.getHtmlOutputFormat());
+        doc.head().appendElement("style").append(cssString);
+
         Elements style = doc.select("style");
         style.trimToSize();
         expected.setHtmlStyle(style.html().trim());
@@ -267,7 +277,12 @@ public class TestAppWithMockedMailService extends DataProvider {
 
     private void helpSetBody(String htmlBodyFile, MockedEmail email) throws Exception {
         Document doc = Jsoup.parse(Help.readFile(Directory.getData(htmlBodyFile)));
-        doc.outputSettings().prettyPrint(false);
+        doc.outputSettings(Emailer.getHtmlOutputFormat());
+
+        // parse it again... seems like an inconsistency in JSoup.
+        // With the same output settings but could have different trailing spaces in
+        // closing tags. This will ensure we have everything the same.
+        doc = Jsoup.parse(doc.html());
         Elements body = doc.select("body");
         body.trimToSize();
         email.setHtmlBody(body.html().trim());

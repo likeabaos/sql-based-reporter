@@ -1,6 +1,7 @@
 {
-    "name": "SQL Report: Table - Single",
-    "summary": "This report will have single data set and only display table in email",
+    "_comment": "This report will have single data set and only display table in email.",
+    "name": "",
+    "summary": "",
     "parts": {
         "1": {
             "header": "Part 1",

@@ -27,6 +27,8 @@ import org.jsoup.select.Elements;
 
 import com.icegreen.greenmail.util.GreenMailUtil;
 
+import likeabaos.tools.sbr.Emailer;
+
 public class MockedEmail {
     private final static Logger LOG = LogManager.getLogger();
 
@@ -179,7 +181,7 @@ public class MockedEmail {
                 BodyPart part = parts.getBodyPart(i);
                 if (StringUtils.containsIgnoreCase(part.getContentType(), "text/HTML")) {
                     Document doc = Jsoup.parse((String) part.getContent());
-                    doc.outputSettings().prettyPrint(false);
+                    doc.outputSettings(Emailer.getHtmlOutputFormat());
 
                     Elements style = doc.select("style");
                     style.trimToSize();

@@ -1,6 +1,7 @@
 {
-    "name": "SQL Report: Attachment - No Data",
-    "summary": "This report will have 1 attachment. Even the data is is empty, the file should have the headers.",
+    "_comment": "The query doesn't return any data. This expects an email with just the report name, summary, and description.",
+    "name": "The Report with Attachment",
+    "summary": "See attached detail report.",
     "parts": {
         "1": {
             "header": "Part 1",

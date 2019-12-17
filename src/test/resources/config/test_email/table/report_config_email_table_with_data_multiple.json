@@ -1,6 +1,7 @@
 {
-    "name": "SQL Report: Table - Multiple",
-    "summary": "This report will have multiple data sets and only display tables in email",
+    "_comment": "This report will have multiple data sets and only display tables in email.",
+    "name": "",
+    "summary": "",
     "parts": {
         "1": {
             "header": "Part 1",

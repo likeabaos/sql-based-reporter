@@ -1,6 +1,6 @@
 {
     "name": "SQL Report: Attachment - Multiple",
-    "summary": "This report will have 2 attachments of the data files, one for each report part.",
+    "summary": "Report Summary. This report will have 2 attachments.",
     "parts": {
         "1": {
             "header": "Part 1",
@@ -26,7 +26,6 @@
     "outputConfig": {
         "enabled": true,
         "output": "EXCEL",
-        "outputPath": "output/test_email",
-        "saveSeparateFile": true
+        "outputPath": "output/test_email"
     }
 }

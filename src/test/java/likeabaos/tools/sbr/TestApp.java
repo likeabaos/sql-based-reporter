@@ -6,13 +6,19 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Properties;
 
 import org.junit.Test;
+import org.sqlite.SQLiteException;
 
+import com.sun.mail.util.MailConnectException;
+
+import likeabaos.tools.sbr.Emailer.MissingEmailPropertiesException;
+import likeabaos.tools.sbr.util.Directory;
 import picocli.CommandLine;
 import picocli.CommandLine.MissingParameterException;
 
@@ -67,5 +73,41 @@ public class TestApp {
             prop.load(input);
             assertEquals(prop.getProperty("app_version"), version);
         }
+    }
+
+    @Test(expected = SQLiteException.class)
+    public void testRunBadQuery() throws Exception {
+        String[] args = new String[] { "jdbc:sqlite::memory:", "test_user", "test_password",
+                Directory.getConfig("report_config_test_full_run.json"), "-c", Directory.TEST_CONFIG_DIR };
+        App app = new App();
+        new CommandLine(app).parseArgs(args);
+        app.run();
+    }
+
+    @Test(expected = FileNotFoundException.class)
+    public void testRunReportDefinitionDoesNotExist() throws Exception {
+        String[] args = new String[] { "jdbc:sqlite::memory:", "test_user", "test_password",
+                "this_file_doesnot_exist.json", "-c", Directory.TEST_CONFIG_DIR };
+        App app = new App();
+        new CommandLine(app).parseArgs(args);
+        app.run();
+    }
+
+    @Test(expected = MissingEmailPropertiesException.class)
+    public void testRunReportConfigDirDoesNotExist() throws Exception {
+        String[] args = new String[] { "jdbc:sqlite::memory:", "test_user", "test_password",
+                Directory.getConfig("report_config_test_app_run.json"), "-c", "this/is/a/very/bad/path" };
+        App app = new App();
+        new CommandLine(app).parseArgs(args);
+        app.run();
+    }
+
+    @Test(expected = MailConnectException.class)
+    public void testRunBadEmailServer() throws Exception {
+        String[] args = new String[] { "jdbc:sqlite::memory:", "test_user", "test_password",
+                Directory.getConfig("report_config_test_app_run.json"), "-c", Directory.getConfig("bad_email_props") };
+        App app = new App();
+        new CommandLine(app).parseArgs(args);
+        app.run();
     }
 }

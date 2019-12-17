@@ -1,6 +1,7 @@
 {
-    "name": "SQL Report: Table - Partial - Hide Empty",
-    "summary": "This report will have multiple data sets and only display tables in email",
+    "_comment": "This report will have multiple queries, but only display tables with data.",
+    "name": "",
+    "summary": "",
     "parts": {
         "1": {
             "header": "Part 1",

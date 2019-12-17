@@ -29,6 +29,12 @@ import javax.mail.internet.MimeMultipart;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Document.OutputSettings;
+import org.jsoup.nodes.Document.OutputSettings.Syntax;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Entities.EscapeMode;
 
 import likeabaos.tools.sbr.config.EmailConfig;
 import likeabaos.tools.sbr.config.ReportConfig;
@@ -82,7 +88,7 @@ public class Emailer {
         if (auth == null)
             LOG.warn("Authenticator is not configured");
 
-        Session session = Session.getDefaultInstance(props, auth);
+        Session session = Session.getInstance(props, auth);
         return session;
     }
 
@@ -137,20 +143,24 @@ public class Emailer {
     String buildBody() throws IOException {
         ReportConfig reportConfig = this.rpt.getConfig();
         EmailConfig emailConfig = reportConfig.getEmailConfig();
-        StringBuilder html = new StringBuilder();
+        Document doc = Jsoup.parseBodyFragment("");
+        doc.outputSettings(Emailer.getHtmlOutputFormat());
 
-        html.append("<html><head>").append(System.lineSeparator());
         File cssFile = new File(this.rpt.getConfigDir().getAbsolutePath() + "/styles.css");
         if (cssFile.exists() && cssFile.isFile()) {
             String css = new String(Files.readAllBytes(cssFile.toPath())).trim();
-            html.append(css);
+            doc.head().appendElement("style").append(css);
         } else {
             LOG.warn("No CSS file found in {}. Email will not be formatted!", this.rpt.getConfigDir().getName());
         }
-        html.append("</head>").append(System.lineSeparator());
 
-        html.append("<body>").append(System.lineSeparator());
+        if (StringUtils.isNotBlank(reportConfig.getName()))
+            doc.body().appendElement("div").addClass("report-name").append(reportConfig.getName());
+        if (StringUtils.isNotBlank(reportConfig.getSummary()))
+            doc.body().appendElement("div").addClass("report-summary").append(reportConfig.getSummary());
+
         Map<Integer, ReportPart> parts = this.rpt.getConfig().getParts();
+        int count = 0;
         for (Entry<Integer, ReportPart> entry : parts.entrySet()) {
             ReportPart part = entry.getValue();
             if (!part.isEnabled())
@@ -162,38 +172,43 @@ public class Emailer {
                 continue;
             }
 
-            html.append("<div class=\"report-body\" id=\"").append(entry.getKey()).append("\">");
-            if (!StringUtils.isBlank(part.getHeader())) {
-                html.append("<div class=\"rpt-header\">").append(part.getHeader()).append(":</div>");
-                html.append(System.lineSeparator());
-            }
-            if (!StringUtils.isBlank(part.getDescription())) {
-                html.append("<div class=\"rpt-description\">").append(part.getDescription()).append("</div>");
-                html.append(System.lineSeparator());
-            }
+            count++;
+            Element reportBody = doc.body().appendElement("div");
+            if (count == 1)
+                reportBody.addClass("report-body-first");
+            else
+                reportBody.addClass("report-body-remain");
+            reportBody.attr("id", String.valueOf(entry.getKey()));
+            if (StringUtils.isNotBlank(part.getHeader()))
+                reportBody.appendElement("div").addClass("rpt-header").text(part.getHeader());
+            if (StringUtils.isNotBlank(part.getDescription()))
+                reportBody.appendElement("div").addClass("rpt-description").text(part.getDescription());
 
             File tempFile = this.rpt.getTempResults().get(entry.getKey());
             if (emailConfig.isDisplayTable() && tempFile != null) {
                 CSV csv = new CSV();
                 csv.setSourceFile(tempFile);
                 String data = csv.toHtmlTable(emailConfig.getEmailRowsLimit());
-                html.append("<div class=\"rpt-table\">").append(data).append("</div>");
-                html.append(System.lineSeparator());
+                reportBody.appendElement("div").addClass("rpt-table").append(data);
             }
 
             File outputFile = this.rpt.getOutputResults().get(entry.getKey());
             if (emailConfig.isDisplayLink() && outputFile != null) {
-                html.append("<div class=\"rpt-link\">");
-                html.append("<a href=\"").append(outputFile.getAbsolutePath()).append("\">");
-                html.append("Link to data file</a>");
-                html.append("</div>");
-                html.append(System.lineSeparator());
+                Element rptlink = reportBody.appendElement("div").addClass("rpt-link");
+                rptlink.appendElement("a").attr("href", outputFile.getAbsolutePath()).text("Link to data file");
             }
-            html.append("</div><br>");
-            html.append(System.lineSeparator());
         }
-        html.append("</body></html>");
-        return html.toString();
+        return doc.html();
+    }
+
+    public static OutputSettings getHtmlOutputFormat() {
+        OutputSettings os = new OutputSettings();
+        os.escapeMode(EscapeMode.base);
+        os.prettyPrint(true);
+        os.outline(false);
+        os.indentAmount(1);
+        os.syntax(Syntax.html);
+        return os;
     }
 
     public static class MissingEmailPropertiesException extends RuntimeException {

@@ -5,6 +5,7 @@ public class ReportPart {
     private String description;
     private String[] sql;
     private boolean enabled = true;
+    private boolean throwExceptionOnError = true;
 
     public String getHeader() {
         return header;
@@ -40,4 +41,13 @@ public class ReportPart {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+
+    public boolean isThrowExceptionOnError() {
+        return throwExceptionOnError;
+    }
+
+    public void setThrowExceptionOnError(boolean throwExceptionOnError) {
+        this.throwExceptionOnError = throwExceptionOnError;
+    }
+    
 }

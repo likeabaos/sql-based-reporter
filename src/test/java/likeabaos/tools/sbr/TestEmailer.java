@@ -101,7 +101,7 @@ public class TestEmailer extends DataProvider {
         String actual = mailer.buildBody();
         Document doc = Jsoup.parse("<html>" + actual + "</html>");
         assertEquals(1, doc.select("style").size());
-        assertEquals(2, doc.select("div.report-body").size());
+        assertEquals(2, doc.select("div[class^=report-body-]").size());
     }
 
     @Test
@@ -112,14 +112,14 @@ public class TestEmailer extends DataProvider {
         Document doc = Jsoup.parse("<html>" + actual + "</html>");
         assertEquals(0, doc.select("style").size());
 
-        Elements reportBodies = doc.select("div.report-body");
+        Elements reportBodies = doc.select("div[class^=report-body-]");
         assertEquals(2, reportBodies.size());
         int count = 0;
         List<String> data = new ArrayList<>();
         for (Element reportBody : reportBodies) {
             Elements header = reportBody.select("div.rpt-header");
             assertEquals(1, header.size());
-            assertEquals("Part " + (++count) + ":", header.first().text());
+            assertEquals("Part " + (++count), header.first().text());
 
             Elements desc = reportBody.select("div.rpt-description");
             assertEquals(1, desc.size());

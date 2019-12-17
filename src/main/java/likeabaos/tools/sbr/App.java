@@ -89,21 +89,14 @@ public class App implements Callable<Integer> {
         return this.email_credentials;
     }
 
+    @Override
     public Integer call() {
         LOG.info("Program started");
         StopWatch watch = new StopWatch();
 
         try {
             watch.start();
-            if (this.isDebugOn()) {
-                Configurator.setRootLevel(Level.TRACE);
-                printParameters(this);
-            }
-            Database db = new Database(this.getConnectionString(), this.getUsername(), this.getPassword());
-            ReportConfig config = ReportConfig.fromFile(this.getReportDefinitionFile());
-            Authenticator auth = App.getMailAuthenticator(this.getEmailCredentials());
-            Reporter rpt = new Reporter(db, config, auth, this.getConfigDir());
-            rpt.run();
+            this.run();
         } catch (Exception e) {
             LOG.catching(e);
             return -1;
@@ -113,6 +106,18 @@ public class App implements Callable<Integer> {
 
         LOG.info("Proram completed in: {}", watch.toString());
         return 0;
+    }
+
+    void run() throws Exception {
+        if (this.isDebugOn()) {
+            Configurator.setRootLevel(Level.TRACE);
+            printParameters(this);
+        }
+        Database db = new Database(this.getConnectionString(), this.getUsername(), this.getPassword());
+        ReportConfig config = ReportConfig.fromFile(this.getReportDefinitionFile());
+        Authenticator auth = App.getMailAuthenticator(this.getEmailCredentials());
+        Reporter rpt = new Reporter(db, config, auth, this.getConfigDir());
+        rpt.run();
     }
 
     public static void printParameters(App app) {

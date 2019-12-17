@@ -26,7 +26,6 @@
     "outputConfig": {
         "enabled": true,
         "output": "CSV",
-        "outputPath": "output/test_email",
-        "saveSeparateFile": true
+        "outputPath": "output/test_email"
     }
 }

@@ -139,9 +139,14 @@ public class Reporter {
                     this.getEmptyResults().add(orderNum);
 
             } catch (Exception e) {
-                log.error("Found error while running report");
-                log.catching(e);
-                continue;
+                log.error("Found error while running report part #{}", orderNum);
+                log.debug("Is throwing exception on error: {}", part.isThrowExceptionOnError());
+                if (part.isThrowExceptionOnError())
+                    throw e;
+                else {
+                    log.catching(e);
+                    continue;
+                }
             }
         }
     }
@@ -165,6 +170,7 @@ public class Reporter {
             output.setCopySource(output instanceof CSV);
             output.setSourceFile(tempFile);
             output.setOutputConfig(this.getConfig().getOutputConfig());
+            output.setSaveSeparateFile(this.getConfig().getOutputConfig().isSaveSeparateFile());
             output.save();
             this.getOutputResults().put(orderNum, output.getOutputFile());
 
@@ -181,17 +187,19 @@ public class Reporter {
             log.info("No email will be sent because emailWhenNoData is turn off and all reports returned empty.");
             return;
         }
-        
+
         log.debug("Replacing placeholers with values...");
         Map<String, String> valuesInjection = this.queryValuesInjection();
         for (Entry<String, String> item : valuesInjection.entrySet()) {
+            String searchKey = "{{" + item.getKey() + "}}";
             for (ReportPart part : this.getConfig().getParts().values()) {
                 if (part.isEnabled()) {
-                    part.setDescription(
-                            StringUtils.replace(part.getDescription(), "{{" + item.getKey() + "}}", item.getValue()));
+                    part.setDescription(StringUtils.replace(part.getDescription(), searchKey, item.getValue()));
                 }
             }
-            config.setSubject(StringUtils.replace(config.getSubject(), "{{" + item.getKey() + "}}", item.getValue()));
+            this.getConfig().setName(StringUtils.replace(this.getConfig().getName(), searchKey, item.getValue()));
+            this.getConfig().setSummary(StringUtils.replace(this.getConfig().getSummary(), searchKey, item.getValue()));
+            config.setSubject(StringUtils.replace(config.getSubject(), searchKey, item.getValue()));
         }
 
         Emailer sender = new Emailer(this);

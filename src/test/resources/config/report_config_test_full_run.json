@@ -25,7 +25,6 @@
     },
     "outputConfig": {
         "output": "CSV",
-        "outputPath": "output",
-        "saveSeparateFile": false
+        "outputPath": "output"
     }
 }

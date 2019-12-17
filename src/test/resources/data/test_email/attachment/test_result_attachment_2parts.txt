@@ -1,8 +1,12 @@
 <body>
-<div class="report-body" id="1"><div class="rpt-header">Part 1:</div>
+<div class="report-name">SQL Report: Attachment - Multiple</div>
+<div class="report-summary">Report Summary. This report will have 2 attachments.</div>
+<div class="report-body-first" id="1">
+<div class="rpt-header">Part 1</div>
 <div class="rpt-description">Description of part 1, shows before data</div>
-</div><br>
-<div class="report-body" id="2"><div class="rpt-header">Part 2:</div>
+</div>
+<div class="report-body-remain" id="2">
+<div class="rpt-header">Part 2</div>
 <div class="rpt-description">Description of part 2, shows before data</div>
-</div><br>
+</div>
 </body>

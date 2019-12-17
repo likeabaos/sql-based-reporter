@@ -1,6 +1,7 @@
 package likeabaos.tools.sbr.config;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -36,6 +37,7 @@ public class TestReportConfig {
             assertEquals("SELECT id, name, capacity FROM warehouse WHERE id > {}".replace("{}", "" + orderNum),
                     part.getSql());
             assertTrue(part.isEnabled());
+            assertFalse(part.isThrowExceptionOnError());
         }
 
         assertNotNull("Email config cannot be null", config.getEmailConfig());

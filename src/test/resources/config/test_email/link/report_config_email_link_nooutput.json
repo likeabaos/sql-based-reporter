@@ -1,6 +1,7 @@
 {
-    "name": "SQL Report: Link - No Output",
-    "summary": "This report will not have any data link because output is disabled. Link must have a valid output.",
+    "_comment": "This report will not have any data link because output is disabled. Link must have a valid output.",
+    "name": "",
+    "summary": "",
     "parts": {
         "1": {
             "header": "Part 1",

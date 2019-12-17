@@ -15,6 +15,11 @@ import org.apache.commons.csv.QuoteMode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.util.FileUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
+import likeabaos.tools.sbr.Emailer;
 
 public class CSV extends BaseOutput {
     private final Logger LOG = LogManager.getLogger();
@@ -52,13 +57,14 @@ public class CSV extends BaseOutput {
     public String toHtmlTable(int rows) throws IOException {
         try (Reader reader = Files.newBufferedReader(this.getSourceFile().toPath());
                 CSVParser csvParser = new CSVParser(reader, CSV.CSV_FORMAT.withFirstRecordAsHeader())) {
-            StringBuilder html = new StringBuilder();
+            Document html = Jsoup.parseBodyFragment("");
+            html.outputSettings(Emailer.getHtmlOutputFormat());
+            Element table = html.body().appendElement("table");
 
-            html.append("<table><tr>");
+            Element hdrRow = table.appendElement("tr");
             for (String name : csvParser.getHeaderNames()) {
-                html.append("<th>").append(name).append("</th>");
+                hdrRow.appendElement("th").text(name);
             }
-            html.append("</tr>");
 
             int rowId = -1;
             int rowProcessed = 0;
@@ -68,20 +74,21 @@ public class CSV extends BaseOutput {
 
                 rowProcessed++;
                 html.append("<tr>");
+                Element datRow = table.appendElement("tr");
                 for (String value : csvRecord) {
-                    html.append("<td>").append(value).append("</td>");
+                    datRow.appendElement("td").text(value);
                 }
-                html.append("</tr>");
             }
-            html.append("</table>");
 
             if (rowProcessed <= rowId) {
-                html.append("<div class=\"table_note\">");
-                html.append("*Showed ").append(rowProcessed).append(" of ").append(rowId + 1).append(" record(s)");
-                html.append("</div>");
+                StringBuilder sb = new StringBuilder();
+                sb.append("*Showed ").append(rowProcessed).append(" of ").append(rowId + 1).append(" record(s)");
+                Element note = html.body().appendElement("div").addClass("table-note");
+                note.text(sb.toString());
             }
 
-            return html.toString();
+            html.outputSettings().prettyPrint(false);
+            return html.select("body").html();
         }
     }
 }
