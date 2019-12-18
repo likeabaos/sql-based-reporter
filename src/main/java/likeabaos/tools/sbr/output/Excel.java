@@ -49,8 +49,9 @@ public class EXCEL extends BaseOutput {
                 CSVParser csvParser = new CSVParser(reader, CSV.CSV_FORMAT)) {
             Workbook wb = WorkbookFactory.create(true);
             Sheet sheet = wb.createSheet();
+            int i = 0;
             for (CSVRecord csvRecord : csvParser) {
-                Row row = sheet.createRow((int) csvParser.getCurrentLineNumber());
+                Row row = sheet.createRow(i++);
                 int j = 0;
                 for (String csvCell : csvRecord) {
                     Cell cell = row.createCell(j++);

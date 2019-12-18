@@ -2,9 +2,6 @@ body {
   font-family: "Calibri", sans-serif;
   font-size: 11pt;
 }
-.table_note {
-  background-color: yellow;
-}
 table, th, td {
   border: 1px solid black;
   border-collapse: collapse;
@@ -14,4 +11,13 @@ th, td {
 }
 th {
   background:#D3D3D3;
+}
+.table-note {
+  background-color: yellow;
+}
+.report-name, .report-summary {
+  margin-bottom: 1em;
+}
+.report-body-remain {
+  margin-top: 1em;
 }
