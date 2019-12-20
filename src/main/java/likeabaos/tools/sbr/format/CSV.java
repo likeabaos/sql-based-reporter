@@ -1,4 +1,4 @@
-package likeabaos.tools.sbr.output;
+package likeabaos.tools.sbr.format;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +21,7 @@ import org.jsoup.nodes.Element;
 
 import likeabaos.tools.sbr.Emailer;
 
-public class CSV extends BaseOutput {
+public class CSV extends BaseFormat {
     private final Logger LOG = LogManager.getLogger();
     public static final CSVFormat CSV_FORMAT = CSVFormat.EXCEL.withQuoteMode(QuoteMode.NON_NUMERIC);
 

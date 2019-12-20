@@ -1,4 +1,4 @@
-package likeabaos.tools.sbr.output;
+package likeabaos.tools.sbr.format;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,7 +21,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
-public class EXCEL extends BaseOutput {
+public class EXCEL extends BaseFormat {
     private final Logger LOG = LogManager.getLogger();
     
     public EXCEL() {

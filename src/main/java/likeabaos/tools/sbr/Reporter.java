@@ -22,8 +22,8 @@ import org.apache.logging.log4j.Logger;
 import likeabaos.tools.sbr.config.EmailConfig;
 import likeabaos.tools.sbr.config.ReportConfig;
 import likeabaos.tools.sbr.config.ReportPart;
-import likeabaos.tools.sbr.output.BaseOutput;
-import likeabaos.tools.sbr.output.CSV;
+import likeabaos.tools.sbr.format.BaseFormat;
+import likeabaos.tools.sbr.format.CSV;
 
 public class Reporter {
     private final Logger log = LogManager.getLogger();
@@ -129,13 +129,13 @@ public class Reporter {
                 // connection from database alive too long. Therefore, we want to save these
                 // data into temp files so that we can come back and process them later.
                 watch.split();
-                File tempFile = BaseOutput.saveResultToTempFiles(rs, tempDir, part.getHeader());
+                File tempFile = BaseFormat.saveResultToTempFiles(rs, tempDir, part.getHeader());
                 this.getTempResults().put(orderNum, tempFile);
 
                 watch.stop();
                 log.debug("Query completed in: {}", watch.toSplitString());
 
-                if (BaseOutput.isTempFileEmpty(tempFile, true))
+                if (BaseFormat.isTempFileEmpty(tempFile, true))
                     this.getEmptyResults().add(orderNum);
 
             } catch (Exception e) {
@@ -161,10 +161,10 @@ public class Reporter {
 
             log.debug("Saving file for report part #{}", orderNum);
             ReportPart part = this.getConfig().getParts().get(orderNum);
-            String className = BaseOutput.getClassName(this.getConfig().getOutputConfig().getOutput());
+            String className = BaseFormat.getClassName(this.getConfig().getOutputConfig().getOutput());
             log.debug("Output class is {}", className);
 
-            BaseOutput output = (BaseOutput) Class.forName(className).getConstructor(Boolean.TYPE)
+            BaseFormat output = (BaseFormat) Class.forName(className).getConstructor(Boolean.TYPE)
                     .newInstance(this.isDeleteOutputOnExit());
             output.setName(part.getHeader());
             output.setCopySource(output instanceof CSV);

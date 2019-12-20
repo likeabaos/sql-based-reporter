@@ -39,7 +39,7 @@ import org.jsoup.nodes.Entities.EscapeMode;
 import likeabaos.tools.sbr.config.EmailConfig;
 import likeabaos.tools.sbr.config.ReportConfig;
 import likeabaos.tools.sbr.config.ReportPart;
-import likeabaos.tools.sbr.output.CSV;
+import likeabaos.tools.sbr.format.CSV;
 
 public class Emailer {
     private static final Logger LOG = LogManager.getLogger();
