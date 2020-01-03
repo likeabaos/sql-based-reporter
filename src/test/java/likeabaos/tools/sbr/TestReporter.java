@@ -51,7 +51,8 @@ public class TestReporter extends DataProvider {
             // Verify we got data
             ReportPart part = config.getParts().get(entry.getKey());
             assertNotNull("Cannot find Report for key " + entry.getKey(), part);
-            assertEquals(part.getHeader() + ".csv", entry.getValue().getName());
+            assertTrue(entry.getValue().getName() + " does not start with " + part.getHeader(),
+                    entry.getValue().getName().startsWith(part.getHeader()));
 
             // Verify temp files are created
             String expected = Help.readFile(Directory.getData("test_full_run_data_" + part.getHeader() + ".csv"));

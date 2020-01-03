@@ -14,7 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.util.FileUtils;
 
-import likeabaos.tools.sbr.config.OutputConfig;
+import apache.mkt.tools.sbr.config.OutputConfig;
 
 /**
  * TODO: Save separate files (nice to have)
@@ -110,7 +110,8 @@ public abstract class BaseFormat {
     }
 
     public static File saveResultToTempFiles(ResultSet rs, File dir, String filename) throws IOException, SQLException {
-        File file = new File(dir, filename + ".csv");
+        String prefix = (StringUtils.length(filename) >= 3) ? filename : "tempOutput";
+        File file = File.createTempFile(prefix, ".csv", dir);
         FileUtils.makeParentDirs(file);
         file.deleteOnExit();
         LOG.debug("Saving temp file: {}", file.getAbsolutePath());
